@@ -1,7 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import DateField from "@/components/DateField.vue"
+</script>
 
 <template>
-  <h3>First Page</h3>
+  <DateField />
 </template>
 
 <style scoped></style>
