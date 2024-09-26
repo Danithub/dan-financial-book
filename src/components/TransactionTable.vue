@@ -41,8 +41,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, ref } from "vue"
+<script setup lang="ts">
+import { ref } from "vue"
 
 interface Transaction {
   id: number
@@ -51,66 +51,50 @@ interface Transaction {
   category: string
 }
 
-export default defineComponent({
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-  },
-  setup() {
-    const transactions = reactive<Transaction[]>([
-      { id: 1, date: "2024-09-25", amount: 15000, category: "식비" },
-      { id: 2, date: "2024-09-24", amount: 45000, category: "교통비" },
-      { id: 3, date: "2024-09-23", amount: 10000, category: "기타" },
-    ])
+const props = defineProps<{ title: string }>()
 
-    const isAddingNewRow = ref(false)
+// 거래 목록 상태
+const transactions = ref<Transaction[]>([
+  { id: 1, date: "2024-09-25", amount: 15000, category: "식비" },
+  { id: 2, date: "2024-09-24", amount: 45000, category: "교통비" },
+  { id: 3, date: "2024-09-23", amount: 10000, category: "기타" },
+])
 
-    // 새로운 거래 입력값을 위한 reactive 데이터
-    const newTransaction = reactive<Transaction>({
-      id: 0,
-      date: "",
-      amount: 0,
-      category: "",
-    })
+// 새로운 행 추가 상태
+const isAddingNewRow = ref(false)
 
-    // 새로운 행 추가 시작
-    const startAdding = () => {
-      isAddingNewRow.value = true
-      newTransaction.date = ""
-      newTransaction.amount = 0
-      newTransaction.category = ""
-    }
-
-    // 새로운 거래 저장
-    const saveTransaction = () => {
-      if (
-        newTransaction.date &&
-        newTransaction.amount &&
-        newTransaction.category
-      ) {
-        transactions.push({
-          id: transactions.length + 1,
-          date: newTransaction.date,
-          amount: newTransaction.amount,
-          category: newTransaction.category,
-        })
-        isAddingNewRow.value = false // 추가 완료 후 다시 + 버튼으로 돌아감
-      } else {
-        alert("모든 항목을 입력해주세요.")
-      }
-    }
-
-    return {
-      transactions,
-      isAddingNewRow,
-      newTransaction,
-      startAdding,
-      saveTransaction,
-    }
-  },
+// 새로운 거래 입력값을 위한 ref
+const newTransaction = ref<Transaction>({
+  id: 0,
+  date: "",
+  amount: 0,
+  category: "",
 })
+
+// 새로운 행 추가 시작
+const startAdding = () => {
+  isAddingNewRow.value = true
+  newTransaction.value = { id: 0, date: "", amount: 0, category: "" }
+}
+
+// 새로운 거래 저장
+const saveTransaction = () => {
+  if (
+    newTransaction.value.date &&
+    newTransaction.value.amount &&
+    newTransaction.value.category
+  ) {
+    transactions.value.push({
+      id: transactions.value.length + 1,
+      date: newTransaction.value.date,
+      amount: newTransaction.value.amount,
+      category: newTransaction.value.category,
+    })
+    isAddingNewRow.value = false // 추가 완료 후 다시 + 버튼으로 돌아감
+  } else {
+    alert("모든 항목을 입력해주세요.")
+  }
+}
 </script>
 
 <style scoped>
