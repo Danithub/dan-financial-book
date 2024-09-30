@@ -23,7 +23,7 @@ const tradeType = ref("수입")
 // 카테고리
 const tradeCategory = ref("")
 // 거래금액
-const tradeAmount = ref(0)
+const tradeAmount = ref(100)
 // 거래일자
 const tradeDate = ref("")
 // 거래내용
