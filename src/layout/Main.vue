@@ -3,18 +3,8 @@
 <template>
   <h2>Main Layout</h2>
   <div class="button-container">
-    <q-btn
-      class="glossy"
-      color="teal"
-      label="Add"
-      :to="{ name: 'FirstView' }"
-    />
-    <q-btn
-      class="glossy"
-      color="teal"
-      label="List"
-      :to="{ name: 'SecondView' }"
-    />
+    <q-btn class="glossy" color="teal" label="Add" :to="{ name: 'Add' }" />
+    <q-btn class="glossy" color="teal" label="List" :to="{ name: 'List' }" />
   </div>
   <router-view />
 </template>

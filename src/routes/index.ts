@@ -1,8 +1,8 @@
 import { createWebHistory, createRouter } from "vue-router"
 
 import Main from "@/layout/Main.vue"
-import First from "@/pages/First.vue"
-import Second from "@/pages/Second.vue"
+import List from "@/pages/List.vue"
+import Add from "@/pages/Add.vue"
 import NotFound from "@/pages/NotFound.vue"
 import TransactionHistory from "@/pages/TransactionHistory.vue"
 import ApprovalForm from "@/pages/ApprovalForm.vue"
@@ -13,8 +13,8 @@ const routes = [
     name: "MainLayout",
     component: Main,
     children: [
-      { path: "/fir", name: "FirstView", component: First },
-      { path: "/sec", name: "SecondView", component: Second },
+      { path: "/List", name: "List", component: List },
+      { path: "/Add", name: "Add", component: Add },
     ],
   },
   {
