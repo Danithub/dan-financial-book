@@ -24,4 +24,8 @@ export default defineConfig({
       },
     ],
   },
+  // aws 서버에서 build할 때 사용하는 경로
+  build: {
+    outDir: "/var/www/dist", // 빌드된 파일을 저장할 경로
+  },
 })
