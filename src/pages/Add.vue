@@ -77,7 +77,7 @@ const saveTrade = () => {
 const saveTransaction = async (param: Transaction) => {
   // 저장 API 호출
   const response = await fetch(
-    `http://localhost:18080/add?type=${param.type}&category=${param.category}&amount=${param.amount}&date=${param.date}&content=${param.content}`,
+    `http://15.165.86.111:18080/add?type=${param.type}&category=${param.category}&amount=${param.amount}&date=${param.date}&content=${param.content}`,
     {
       method: "Get",
       headers: {

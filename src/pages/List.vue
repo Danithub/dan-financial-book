@@ -28,7 +28,7 @@ onMounted(async () => {
  * Methods *
  ***********/
 const findTransactionList = async (date: String) => {
-  const response = await fetch(`http://localhost:18080/find?date=${date}`, {
+  const response = await fetch(`http://15.165.86.111:18080/find?date=${date}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
