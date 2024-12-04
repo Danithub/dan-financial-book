@@ -21,4 +21,4 @@ jobs:
           cd dan-financial-book
           git pull
           npm run build
-          sudo systemctrl restart nginx
+          sudo systemctl restart nginx.service
