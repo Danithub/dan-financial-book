@@ -6,6 +6,7 @@ import Add from "@/pages/Add.vue"
 import NotFound from "@/pages/NotFound.vue"
 import TransactionHistory from "@/pages/TransactionHistory.vue"
 import ApprovalForm from "@/pages/ApprovalForm.vue"
+import Calendar from "@/pages/Calendar.vue"
 
 const routes = [
   {
@@ -15,6 +16,7 @@ const routes = [
     children: [
       { path: "/List", name: "List", component: List },
       { path: "/Add", name: "Add", component: Add },
+      { path: "/Calendar", name: "Calendar", component: Calendar },
     ],
   },
   {
