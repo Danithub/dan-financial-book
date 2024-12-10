@@ -1,4 +1,4 @@
-name: Deploy Danksalad Frontend to Amazon ECS
+name: Deploy Danksalad Frontend to Amazon EC2
 
 on:
   push:
