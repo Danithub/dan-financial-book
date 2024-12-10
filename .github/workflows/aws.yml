@@ -2,7 +2,7 @@ name: Deploy Danksalad Frontend to Amazon EC2
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -10,15 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: ssh to ec2
-      uses: appleboy/ssh-action@v1.2.0
-      with:
-        host: ${{ secrets.REMOTE_IP }}
-        port: ${{ secrets.REMOTE_SSH_PORT }}
-        username: ${{ secrets.REMOTE_USER }}
-        key: ${{ secrets.REMOTE_PRIVATE_KEY }}
-        script: |
-          cd dan-financial-book
-          git pull
-          npm run build
-          sudo systemctl restart nginx.service
+      - name: ssh to ec2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.REMOTE_IP }}
+          port: ${{ secrets.REMOTE_SSH_PORT }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_PRIVATE_KEY }}
+          script: |
+            cd dan-financial-book
+            git fetch
+            git pull
+            npm run build
+            sudo systemctl restart nginx.service
