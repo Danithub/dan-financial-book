@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
-import CalendarSample from "@/components/CalendarSample.vue"
 import Calendar from "@/components/Calendar.vue"
 import CalendarGpt from "@/components/CalendarGpt.vue"
 
@@ -28,7 +27,6 @@ watch(tab, (newVal, oldVal) => {
     <q-tab-panel name="monthly">
       <CalendarGpt />
       <Calendar />
-      <CalendarSample />
     </q-tab-panel>
 
     <q-tab-panel name="weekly">
