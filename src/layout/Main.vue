@@ -3,6 +3,7 @@
 <template>
   <h2>Main Layout</h2>
   <div class="button-container">
+    <q-btn class="glossy" color="teal" label="Calendar" :to="{ name: 'Calendar' }" />
     <q-btn class="glossy" color="teal" label="Add" :to="{ name: 'Add' }" />
     <q-btn class="glossy" color="teal" label="List" :to="{ name: 'List' }" />
   </div>

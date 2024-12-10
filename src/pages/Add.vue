@@ -19,7 +19,7 @@ interface Transaction {
 }
 const saveParam = ref({} as Transaction)
 // 거래방식
-const tradeType = ref("수입")
+const tradeType = ref("1")
 // 카테고리
 const tradeCategory = ref("")
 // 거래금액
@@ -60,9 +60,10 @@ const saveTrade = () => {
     date: tradeDate.value,
     content: tradeDescription.value,
   }
+
   saveTransaction(saveParam.value).then(() => {
     // 변수 초기화
-    tradeType.value = "수입"
+    tradeType.value = "1"
     tradeCategory.value = ""
     tradeAmount.value = 0
     tradeDate.value = new Date()
@@ -101,7 +102,9 @@ const saveTransaction = async (param: Transaction) => {
   <q-select
     v-model="tradeType"
     :options="tradeTypeOptions"
+    emit-value
     label="거래방식"
+    map-options
     outlined
   ></q-select>
 
