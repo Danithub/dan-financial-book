@@ -1,19 +1,3 @@
-<template>
-  <div class="day-box">
-    <div class="day-header">
-      <span class="date">{{ day }}</span>
-      <span v-if="isHoliday" class="holiday-label">{{ holidayLabel }}</span>
-    </div>
-    <div class="day-footer">
-      <div class="transaction">
-        <div class="income">{{ formatAmount(income, "+") }}</div>
-        <div class="expense">{{ formatAmount(expense, "-") }}</div>
-        <div class="transfer">{{ formatAmount(transfer, "+") }}</div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { ref, computed } from "vue"
 
@@ -52,6 +36,22 @@ const formatAmount = (amount: number, prefix: string) => {
 }
 </script>
 
+<template>
+  <div class="day-box">
+    <div class="day-header">
+      <span class="date">{{ day }}</span>
+      <span v-if="isHoliday" class="holiday-label">{{ holidayLabel }}</span>
+    </div>
+    <div class="day-footer">
+      <div class="transaction">
+        <div class="income">{{ formatAmount(income, "+") }}</div>
+        <div class="expense">{{ formatAmount(expense, "-") }}</div>
+        <div class="transfer">{{ formatAmount(transfer, "+") }}</div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .day-box {
   display: flex;
@@ -71,6 +71,7 @@ const formatAmount = (amount: number, prefix: string) => {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  padding-bottom: 12px;
 }
 
 .date {
@@ -79,7 +80,7 @@ const formatAmount = (amount: number, prefix: string) => {
 }
 
 .holiday-label {
-  /* font-size: 12px; */
+  font-size: 9px;
   color: red;
   border: 1px solid pink;
   border-radius: 12px;
