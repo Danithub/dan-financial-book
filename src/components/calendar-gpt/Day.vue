@@ -27,6 +27,10 @@ defineProps({
     type: Number,
     default: 0,
   },
+  isCurrentMonth: {
+    type: Boolean,
+    default: true, // 현재 월 여부
+  },
 })
 
 // 포맷팅 함수
@@ -37,7 +41,8 @@ const formatAmount = (amount: number, prefix: string) => {
 </script>
 
 <template>
-  <div class="day-box">
+  <div class="day-box" :class="{ 'not-current-month': !isCurrentMonth }">
+    <!-- 수정된 부분 -->
     <div class="day-header">
       <span class="date">{{ day }}</span>
       <span v-if="isHoliday" class="holiday-label">{{ holidayLabel }}</span>
@@ -115,5 +120,11 @@ const formatAmount = (amount: number, prefix: string) => {
 
 .transfer {
   color: blue;
+}
+
+/* 현재 월이 아닌 경우 흐린 색상 적용 */
+.not-current-month {
+  /* 추가된 부분 */
+  opacity: 0.4;
 }
 </style>
