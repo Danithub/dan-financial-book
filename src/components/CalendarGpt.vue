@@ -51,7 +51,7 @@ const weekdays = ["일", "월", "화", "수", "목", "금", "토"]
 
 const displayElements = ref<DateToDisplay[]>([])
 
-const today = ref<DateFormat>()
+const today = ref<DateFormat>({ year: 0, month: 0, day: 0 })
 
 /*************
  * LifeCycle *
@@ -152,13 +152,36 @@ const getTotalCalendarInfoToDisplay = (_today: DateFormat) => {
 
   return elements
 }
+
+// 월 이동 함수
+const goToPreviousMonth = () => {
+  let { year, month } = CalendarUtils.getMonthInfo(
+    today.value?.year,
+    today.value?.month - 1
+  )
+  today.value.year = year
+  today.value.month = month
+  displayElements.value = getTotalCalendarInfoToDisplay(today.value)
+}
+
+const goToNextMonth = () => {
+  let { year, month } = CalendarUtils.getMonthInfo(
+    today.value?.year,
+    today.value?.month + 1
+  )
+  today.value.year = year
+  today.value.month = month
+  displayElements.value = getTotalCalendarInfoToDisplay(today.value)
+}
 </script>
 
 <template>
   <div class="calendar">
     <!-- 달력 헤더 -->
     <div class="calendar-header">
+      <button @click="goToPreviousMonth" class="nav-button">&lt;</button>
       <span class="month-label">{{ today?.year }}년 {{ today?.month }}월</span>
+      <button @click="goToNextMonth" class="nav-button">&gt;</button>
     </div>
 
     <!-- 요일 표시 -->
@@ -189,32 +212,49 @@ const getTotalCalendarInfoToDisplay = (_today: DateFormat) => {
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 600px;
   margin: auto;
 }
 
 .calendar-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
+.nav-button {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button:hover {
+  background-color: #e0e0e0;
+}
+
 .calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  font-weight: bold;
   text-align: center;
+  font-weight: bold;
   margin-bottom: 10px;
 }
 
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+  gap: 5px;
 }
 
 .empty-day {
-  width: 100%;
   height: 100px;
 }
 
