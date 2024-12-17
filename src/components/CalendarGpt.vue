@@ -179,9 +179,13 @@ const goToNextMonth = () => {
   <div class="calendar">
     <!-- 달력 헤더 -->
     <div class="calendar-header">
-      <button @click="goToPreviousMonth" class="nav-button">&lt;</button>
+      <button @click="goToPreviousMonth" class="nav-button">
+        <img src="@/assets/left-arrow.svg" alt="Previous Month" />
+      </button>
       <span class="month-label">{{ today?.year }}년 {{ today?.month }}월</span>
-      <button @click="goToNextMonth" class="nav-button">&gt;</button>
+      <button @click="goToNextMonth" class="nav-button">
+        <img src="@/assets/right-arrow.svg" alt="Next Month" />
+      </button>
     </div>
 
     <!-- 요일 표시 -->
@@ -226,18 +230,22 @@ const goToNextMonth = () => {
 }
 
 .nav-button {
-  background-color: #f0f0f0;
+  background-color: transparent;
   border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-size: 18px;
+  padding: 5px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.nav-button:hover {
-  background-color: #e0e0e0;
+.nav-button img {
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: transform 0.2s ease;
+}
+
+.nav-button:hover img {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
 }
 
 .calendar-weekdays {
