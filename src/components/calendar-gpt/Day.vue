@@ -44,14 +44,22 @@ const formatAmount = (amount: number, prefix: string) => {
   <div class="day-box" :class="{ 'not-current-month': !isCurrentMonth }">
     <!-- 수정된 부분 -->
     <div class="day-header">
-      <span class="date">{{ day }}</span>
+      <span :class="{ date: !isHoliday, 'holiday-date': isHoliday }">{{
+        day
+      }}</span>
       <span v-if="isHoliday" class="holiday-label">{{ holidayLabel }}</span>
     </div>
     <div class="day-footer">
       <div class="transaction">
-        <div class="income">{{ formatAmount(income, "+") }}</div>
-        <div class="expense">{{ formatAmount(expense, "-") }}</div>
-        <div class="transfer">{{ formatAmount(transfer, "+") }}</div>
+        <div class="income" v-if="income != 0">
+          {{ formatAmount(income, "+") }}
+        </div>
+        <div class="expense" v-if="expense != 0">
+          {{ formatAmount(expense, "-") }}
+        </div>
+        <div class="transfer" v-if="transfer != 0">
+          {{ formatAmount(transfer, "+") }}
+        </div>
       </div>
     </div>
   </div>
@@ -82,6 +90,12 @@ const formatAmount = (amount: number, prefix: string) => {
 .date {
   font-size: 14px;
   font-weight: bold;
+}
+
+.holiday-date {
+  font-size: 14px;
+  font-weight: bold;
+  color: red;
 }
 
 .holiday-label {

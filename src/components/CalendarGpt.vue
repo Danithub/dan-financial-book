@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue"
 import Day from "@/components/calendar-gpt/Day.vue"
 import CalendarUtils from "@/utils/CalendarUtils"
+import DateUtils from "@/utils/DateUtils"
 
 /*************
  * Interface *
@@ -15,11 +16,23 @@ interface DateToDisplay {
   txnInfo: TxnInfo
   isCurrentMonth: boolean
 }
+
 // 공휴일 여부 및 정보
 interface Event {
   exist: boolean
   label: string
 }
+
+// 일별 디스플레이 정보(거래내역, 공휴일) 조회 데이터
+interface DayWithEvent {
+  date: string
+  holiYn: boolean
+  holiName: string
+  income: number
+  expense: number
+  transfer: number
+}
+
 // 일별 거래 총액
 interface TxnInfo {
   income: number
@@ -53,20 +66,22 @@ const displayElements = ref<DateToDisplay[]>([])
 
 const today = ref<DateFormat>({ year: 0, month: 0, day: 0 })
 
+const monthlyEvnets = ref<DayWithEvent[]>([])
+
 /*************
  * LifeCycle *
  ************/
-onMounted(() => {
+onMounted(async () => {
   today.value = CalendarUtils.toInstance(new Date())
 
-  displayElements.value = getTotalCalendarInfoToDisplay(today.value)
+  displayElements.value = await getTotalCalendarInfoToDisplay(today.value)
 })
 
 /*************
  * Functions *
  ************/
 // 7*5 구조로 디스플레이될 날짜를 계산한다.
-const getTotalCalendarInfoToDisplay = (_today: DateFormat) => {
+const getTotalCalendarInfoToDisplay = async (_today: DateFormat) => {
   // 1. 월별 정보를 가져온다.
   let lastMonth: Month = CalendarUtils.getMonthInfo(
     _today.year,
@@ -78,9 +93,12 @@ const getTotalCalendarInfoToDisplay = (_today: DateFormat) => {
     _today.month + 1
   )
 
+  await getCalendarInfo(lastMonth, nextMonth)
+
   // TODO 이번달 기준이 아니라 지난 달 1일과 다음 달 말일이 일/토가 아니었을 때를 구하면 되잖아?
   // TODO 조회 기준(시작일~종료일)을 파라미터로 보내서 전체 내역을 한번에 조회하도록 쿼리 작성
 
+  // 초기화
   let elements: DateToDisplay[] = []
 
   // 2. 이번 달 1일이 일요일이 아닌 경우 지난 달 정보를 가져온다.
@@ -89,41 +107,100 @@ const getTotalCalendarInfoToDisplay = (_today: DateFormat) => {
     // 29 30 31 1
     // -2  -1  0
     for (let index = 0; index < thisMonth.firstDow; index++) {
-      elements.push({
-        year: lastMonth.year,
-        month: lastMonth.month,
-        day: lastMonth.lastDay - (thisMonth.firstDow - (index + 1)),
+      let current = DateUtils.toString2(
+        lastMonth.year,
+        lastMonth.month,
+        lastMonth.lastDay - (thisMonth.firstDow - (index + 1))
+      )
+
+      let element: DateToDisplay = {
+        year: 0,
+        month: 0,
+        day: 0,
         event: {
-          exist: true,
-          label: "Hi",
+          exist: false,
+          label: "",
         },
         txnInfo: {
-          income: 200,
-          expense: 1200,
-          transfer: 30200,
+          income: 0,
+          expense: 0,
+          transfer: 0,
         },
         isCurrentMonth: false,
-      })
+      }
+
+      // 날짜
+      element.year = lastMonth.year
+      element.month = lastMonth.month
+      element.day = lastMonth.lastDay - (thisMonth.firstDow - (index + 1))
+
+      // 공휴일, 거래금액
+      let event = monthlyEvnets.value.find((x) => x.date == current)
+      if (event) {
+        element.event.exist = event.holiYn
+        element.event.label = event.holiName
+        element.txnInfo.income = event.income
+        element.txnInfo.expense = event.expense
+        element.txnInfo.transfer = event.transfer
+      } else {
+        element.event.exist = false
+        element.event.label = ""
+        element.txnInfo.income = 0
+        element.txnInfo.expense = 0
+        element.txnInfo.transfer = 0
+      }
+
+      elements.push(element)
     }
   }
 
   // 3. 이번달 정보를 가져온다.
   for (let index = 0; index < thisMonth.lastDay; index++) {
-    elements.push({
-      year: thisMonth.year,
-      month: thisMonth.month,
-      day: index + 1,
+    let current = DateUtils.toString2(
+      thisMonth.year,
+      thisMonth.month,
+      index + 1
+    )
+    let element: DateToDisplay = {
+      year: 0,
+      month: 0,
+      day: 0,
       event: {
         exist: false,
         label: "",
       },
       txnInfo: {
-        income: 20200,
-        expense: 1600,
-        transfer: 900,
+        income: 0,
+        expense: 0,
+        transfer: 0,
       },
-      isCurrentMonth: true,
-    })
+      isCurrentMonth: false,
+    }
+
+    // 날짜
+    element.year = thisMonth.year
+    element.month = thisMonth.month
+    element.day = index + 1
+    element.isCurrentMonth = true
+
+    // 공휴일, 거래금액
+    let event = monthlyEvnets.value.find((x) => x.date == current)
+    if (event) {
+      element.event.exist = event.holiYn
+      element.event.label = event.holiName
+      element.txnInfo.income = event.income
+      element.txnInfo.expense = event.expense
+      element.txnInfo.transfer = event.transfer
+    } else {
+      element.event.exist = false
+      element.event.label = ""
+      element.txnInfo.income = 0
+      element.txnInfo.expense = 0
+      element.txnInfo.transfer = 0
+    }
+
+    console.log("element", element)
+    elements.push(element)
   }
 
   // 4. 이번달 말일이 토요일이 아닌 경우 다음 달 정보를 가져온다.
@@ -132,46 +209,109 @@ const getTotalCalendarInfoToDisplay = (_today: DateFormat) => {
     // 31 1  2
     // 4  5  6
     for (let index = 0; index < 6 - thisMonth.lastDow; index++) {
-      elements.push({
-        year: nextMonth.year,
-        month: nextMonth.month,
-        day: 1 + index,
+      let current = DateUtils.toString2(
+        nextMonth.year,
+        nextMonth.month,
+        index + 1
+      )
+
+      let element: DateToDisplay = {
+        year: 0,
+        month: 0,
+        day: 0,
         event: {
-          exist: true,
-          label: "설날 연휴",
+          exist: false,
+          label: "",
         },
         txnInfo: {
-          income: 700,
-          expense: 81600,
-          transfer: 900,
+          income: 0,
+          expense: 0,
+          transfer: 0,
         },
         isCurrentMonth: false,
-      })
+      }
+
+      // 날짜
+      element.year = nextMonth.year
+      element.month = nextMonth.month
+      element.day = index + 1
+
+      // 공휴일, 거래금액
+      let event = monthlyEvnets.value.find((x) => x.date == current)
+      console.log("event", event)
+      if (event) {
+        element.event.exist = event.holiYn
+        element.event.label = event.holiName
+        element.txnInfo.income = event.income
+        element.txnInfo.expense = event.expense
+        element.txnInfo.transfer = event.transfer
+      } else {
+        element.event.exist = false
+        element.event.label = ""
+        element.txnInfo.income = 0
+        element.txnInfo.expense = 0
+        element.txnInfo.transfer = 0
+      }
+
+      elements.push(element)
     }
   }
 
   return elements
 }
 
+const getCalendarInfo = async (_lastMonth: Month, _nextMonth: Month) => {
+  let param = {
+    stdt: DateUtils.toString2(
+      _lastMonth.year,
+      _lastMonth.month,
+      _lastMonth.firstDay,
+      ""
+    ),
+    eddt: DateUtils.toString2(
+      _nextMonth.year,
+      _nextMonth.month,
+      _nextMonth.lastDay,
+      ""
+    ),
+  }
+
+  let response = await fetch("http://localhost:18080/cal/find", {
+    method: "Post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(param), // JSON 형식으로 데이터 변환
+  })
+
+  console.log(response)
+
+  let data = await response.json()
+  console.log(data)
+
+  monthlyEvnets.value = data.body as DayWithEvent[]
+  console.log("monthlyEvnets", monthlyEvnets.value)
+}
+
 // 월 이동 함수
-const goToPreviousMonth = () => {
+const goToPreviousMonth = async () => {
   let { year, month } = CalendarUtils.getMonthInfo(
     today.value?.year,
     today.value?.month - 1
   )
   today.value.year = year
   today.value.month = month
-  displayElements.value = getTotalCalendarInfoToDisplay(today.value)
+  displayElements.value = await getTotalCalendarInfoToDisplay(today.value)
 }
 
-const goToNextMonth = () => {
+const goToNextMonth = async () => {
   let { year, month } = CalendarUtils.getMonthInfo(
     today.value?.year,
     today.value?.month + 1
   )
   today.value.year = year
   today.value.month = month
-  displayElements.value = getTotalCalendarInfoToDisplay(today.value)
+  displayElements.value = await getTotalCalendarInfoToDisplay(today.value)
 }
 </script>
 

@@ -25,6 +25,30 @@ export default class DateUtils {
   }
 
   /**
+   * 날짜 형식을 "yyyy-MM-dd"로 출력
+   *
+   * @param year 년
+   * @param month 월
+   * @param day 일
+   * @param delimiter 구분자(기본값: "-")
+   * @returns "yyyy-MM-dd"
+   */
+  public static toString2(
+    year: number,
+    month: number,
+    day: number,
+    delimiter: String = "-"
+  ): String {
+    return (
+      year.toString() +
+      delimiter +
+      month.toString().padStart(2, "0") +
+      delimiter +
+      day.toString().padStart(2, "0")
+    )
+  }
+
+  /**
    * Date 객체를 별도의 객체로 치환한다.
    * @param date Date 객체
    * @returns {년, 월, 일}
